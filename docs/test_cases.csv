@@ -1,0 +1,17 @@
+Test Case ID,Module,Scenario,Method,Endpoint,Test Data,Expected Result,Priority,Type,Automated
+TC_API_01,Health,API is up,GET,/ping,-,201 Created,High,Positive,Yes
+TC_API_02,Auth,Create token with valid credentials,POST,/auth,admin / password123,200 + non-empty token,High,Positive,Yes
+TC_API_03,Auth,Create token with wrong password,POST,/auth,admin / wrong_password,"No token; reason ""Bad credentials"" (should be 401, returns 200: BUG-001)",High,Negative,Yes
+TC_API_04,Booking,Create booking,POST,/booking,Random first/last name + price,200 + bookingid; body matches schema and sent data,High,Positive,Yes
+TC_API_05,Booking,Get booking by ID,GET,/booking/{id},bookingId from TC_API_04,200; matches schema and created data,High,Positive,Yes
+TC_API_06,Booking,Search bookings by name,GET,/booking?firstname=&lastname=,Name from TC_API_04,200; array includes bookingId,Medium,Positive,Yes
+TC_API_07,Booking,Full update with token,PUT,/booking/{id},totalprice 999 + new dates,200; all fields updated,High,Positive,Yes
+TC_API_08,Booking,Partial update with token,PATCH,/booking/{id},additionalneeds only,200; only that field changes,Medium,Positive,Yes
+TC_API_09,Booking,Delete booking with token,DELETE,/booking/{id},bookingId,"Deleted (should be 200/204, returns 201: BUG-002)",High,Positive,Yes
+TC_API_10,Booking,Get deleted booking,GET,/booking/{id},Deleted bookingId,404 Not Found,Medium,Negative,Yes
+TC_API_11,Booking,Get non-existent booking,GET,/booking/999999999,-,404 Not Found,Medium,Negative,Yes
+TC_API_12,Security,Update without token,PUT,/booking/1,No Cookie header,403 Forbidden,High,Negative,Yes
+TC_API_13,Security,Update with invalid token,PUT,/booking/1,token=invalid_token_123,403 Forbidden,High,Negative,Yes
+TC_API_14,Security,Delete without token,DELETE,/booking/1,No Cookie header,403 Forbidden,High,Negative,Yes
+TC_API_15,Validation,Create booking with missing fields,POST,/booking,firstname only,"Rejected, no booking created (should be 400, returns 500: BUG-003)",Medium,Negative,Yes
+ALL,All,Response time,Any,All endpoints,-,Under 3000 ms,Medium,Performance,Yes
